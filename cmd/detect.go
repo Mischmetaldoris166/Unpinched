@@ -64,12 +64,18 @@ func runScan(_ *cobra.Command, _ []string) error {
 	hostname, _ := os.Hostname()
 
 	r := &report.ScanReport{
-		Timestamp: time.Now().UTC(),
-		Hostname:  hostname,
-		OS:        runtime.GOOS + "/" + runtime.GOARCH,
+		Timestamp:          time.Now().UTC(),
+		Hostname:           hostname,
+		OS:                 runtime.GOOS + "/" + runtime.GOARCH,
+		PortFindings:       []scanner.PortFinding{},
+		ProcessFindings:    []scanner.ProcessFinding{},
+		CDPFindings:        []scanner.CDPFinding{},
+		FilesystemFindings: []scanner.FilesystemFinding{},
+		ConfigFindings:     []scanner.ConfigFinding{},
+		PersistFindings:    []scanner.PersistFinding{},
 	}
 
-	// Run all four checks.
+	// Run all six checks.
 	r.PortFindings = scanner.ScanPorts(extraPorts, timeout)
 
 	procFindings, err := scanner.ScanProcesses()
@@ -83,7 +89,15 @@ func runScan(_ *cobra.Command, _ []string) error {
 		r.CDPFindings = []scanner.CDPFinding{cdpFinding}
 	}
 
-	r.FilesystemFindings = scanner.ScanFilesystem()
+	if fs := scanner.ScanFilesystem(); fs != nil {
+		r.FilesystemFindings = fs
+	}
+	if cf := scanner.ScanConfig(); cf != nil {
+		r.ConfigFindings = cf
+	}
+	if pf := scanner.ScanPersist(); pf != nil {
+		r.PersistFindings = pf
+	}
 
 	// Compute overall risk.
 	r.RiskLevel = report.ComputeRiskLevel(r)
