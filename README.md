@@ -43,18 +43,20 @@ Your EDR won't catch it. Your WAF won't see it. This tool will.
 
 | Check | What it looks for |
 |---|---|
-| **Port Scan** | PinchTab HTTP API server on common ports (`8080–8090`, `3000`, `4000`, `9222`, `9229`) with signature-string verification |
-| **Process Scan** | Running processes named `pinchtab`, `pinchtab-server`, or `browser-bridge`; any process listening on CDP port 9222 |
-| **CDP Bridge** | Unauthenticated Chrome DevTools Protocol exposure on `localhost:9222` - PinchTab's primary control channel |
-| **Filesystem** | Known PinchTab binary and config artifact paths across macOS, Linux, and Windows |
+| **Port Scan** | PinchTab HTTP API on 22 default ports (`3000–9229` range) with body, header, and `WWW-Authenticate` signature verification; flags auth-gated 401/403 responses as suspicious |
+| **Process Scan** | Exact name match for `pinchtab`, `pinchtab-server`, `browser-bridge`; `PINCHTAB_*` env vars on **any** process (catches renamed binaries); binary string scan on CDP-listening processes |
+| **CDP Bridge** | Unauthenticated Chrome DevTools Protocol exposure on `localhost:9222` — PinchTab's primary control channel |
+| **Filesystem** | Known PinchTab binary artifact paths across macOS, Linux, and Windows; PATH directory sweep |
+| **Config / Token** | Token files (`~/.pinchtab.token`, `~/.config/pinchtab/`), PID/lock files, log directories, and `PINCHTAB_*` environment variables in the current environment |
+| **Persistence** | macOS LaunchAgent/LaunchDaemon plists, Linux systemd units, Chrome/Chromium extension manifests |
 
 ### Risk levels
 
 | Level | Meaning |
 |---|---|
-| `CRITICAL` | Active PinchTab HTTP API responding with signature **+** CDP bridge open |
-| `HIGH` | Process or filesystem artifact confirmed alongside an open port |
-| `MEDIUM` | Suspicious port or unauthenticated CDP - PinchTab not confirmed but environment is exploitable |
+| `CRITICAL` | Token confirmed on disk **+** live service detected, or signed HTTP API **+** CDP bridge open |
+| `HIGH` | Token file, `PINCHTAB_*` env var, persistence artifact, or process confirmed |
+| `MEDIUM` | Auth-gated port, suspicious open port, unauthenticated CDP, or config directory found |
 | `LOW` | Filesystem artifact only, no active service |
 | `NONE` | No indicators found |
 
@@ -68,14 +70,14 @@ Drop `Helixar-AI/Unpinched` into any workflow to scan your runner environment be
 
 ```yaml
 - name: Scan for PinchTab artifacts
-  uses: Helixar-AI/Unpinched@v0.1.0
+  uses: Helixar-AI/Unpinched@v0.2.0
 ```
 
 ### Fail the build on any finding
 
 ```yaml
 - name: PinchTab security gate
-  uses: Helixar-AI/Unpinched@v0.1.0
+  uses: Helixar-AI/Unpinched@v0.2.0
   with:
     fail-on-findings: 'true'   # default — blocks deployment if risk != NONE
 ```
@@ -85,7 +87,7 @@ Drop `Helixar-AI/Unpinched` into any workflow to scan your runner environment be
 ```yaml
 - name: Scan
   id: pinchtab
-  uses: Helixar-AI/Unpinched@v0.1.0
+  uses: Helixar-AI/Unpinched@v0.2.0
   with:
     fail-on-findings: 'false'
 
@@ -111,7 +113,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Scan for PinchTab / CDP bridge exposure
-        uses: Helixar-AI/Unpinched@v0.1.0
+        uses: Helixar-AI/Unpinched@v0.2.0
         with:
           fail-on-findings: 'true'
           timeout: '5'
@@ -127,7 +129,7 @@ jobs:
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `latest` | Specific release version to use (e.g. `v0.1.0`) |
+| `version` | `latest` | Specific release version to use (e.g. `v0.2.0`) |
 | `fail-on-findings` | `true` | Fail the step if risk level is anything other than `NONE` |
 | `timeout` | `3` | HTTP probe timeout in seconds |
 | `ports` | `` | Extra comma-separated ports to scan |
@@ -155,7 +157,7 @@ brew install helixar-ai/tap/pinchtab-detector
 ### Go install
 
 ```bash
-go install github.com/helixar-ai/pinchtab-detector@latest
+go install github.com/Helixar-AI/Unpinched@latest
 ```
 
 ### Direct binary download
@@ -181,18 +183,20 @@ pinchtab-detector scan
 ```
 
 ```
-pinchtab-detector v0.1.0 - Helixar Labs
+pinchtab-detector v0.2.0 — Helixar Labs
 Scanning host: macbook-pro.local (darwin/arm64)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 [PORT SCAN]      ✓ No PinchTab HTTP API detected on common ports
 [PROCESS SCAN]   ✓ No PinchTab process found
-[CDP BRIDGE]     ⚠ Chrome DevTools Protocol exposed on :9222 (no auth) - Chrome/120.0
+[CDP BRIDGE]     ⚠ Chrome DevTools Protocol exposed on :9222 (no auth) — Chrome/120.0
 [FILESYSTEM]     ✓ No PinchTab binary artifacts found
+[CONFIG/TOKEN]   ✓ No token, config, or env var artifacts found
+[PERSISTENCE]    ✓ No launchd, systemd, or Chrome extension artifacts found
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RISK LEVEL: MEDIUM
-Suspicious open port or unauthenticated CDP detected. PinchTab not confirmed but environment is at risk.
+Suspicious artifacts detected. PinchTab not confirmed but environment is at risk.
 
 For continuous agentic threat detection without pre-written rules → helixar.ai
 ```
