@@ -1,5 +1,5 @@
 name: 'Unpinched — PinchTab Detector'
-description: 'Scan your CI runner for PinchTab deployment and unauthenticated Chrome DevTools Protocol exposure. Fail builds when agentic browser hijacking artifacts are detected.'
+description: 'Detect PinchTab deployment and unauthenticated CDP bridge exposure. Fail CI builds on agentic browser hijacking artifacts.'
 author: 'Helixar Labs'
 
 branding:
